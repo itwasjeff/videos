@@ -1,0 +1,12 @@
+{
+    "db" : {
+        "connection" : {
+            "host" : "localhost",
+            "port": 5432,
+            "database" : "video",
+            "username" : "postgres",
+            "password" : "Tbatst01!"
+        },
+        "timeout" : 5000
+    }
+}
