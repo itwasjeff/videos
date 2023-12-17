@@ -1,6 +1,3 @@
-// import config from "../configs/config.json";
-// import postgres from "postgres";
-
 const config = require("../configs/config.json");
 const postgres = require("postgres");
 const Postgres = require("../services/crud/postgres.js");

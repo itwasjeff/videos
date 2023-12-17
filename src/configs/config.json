@@ -8,5 +8,9 @@
             "password" : "Tbatst01!"
         },
         "timeout" : 5000
+    },
+    "server" : {
+        "name" : "express",
+        "port" : 3000
     }
 }

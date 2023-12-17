@@ -1,71 +1,58 @@
+const config = require("./src/configs/config.json");
 const process = require("node:process");
 const models = require("./src/models/index.js");
 const postgres = require('postgres');
+const sql = postgres(config.db.connection);
 const express = require('express');
 const app = express();
-const port = 3000;
-
-const sql = postgres({
-  host: 'localhost',
-  port: 5432,
-  database: 'video',
-  username: 'postgres',
-  password: 'Tbatst01!'
-});
+const auth = require("./src/middleware/auth.js");
 
 process.on("exit", (code) => {
   sql.end();
 });
 
 app.use(express.json());
+// app.use(auth);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+app.listen(config.server.port, () => {
+  console.log(`Example app listening at http://localhost:${config.server.port}`);
 });
 
 app.get('/sql', async (req, res) => {
       res.send(await sql`select now()`);
-      await sql.end();
 });
 
 app.get('/genres', async (req, res) => {
       res.send(await sql`select * from video.genres`);
-      await sql.end();
 });
 
 app.get('/name/:id', async (req, res) => {
-  let name = new models.Name(sql, req.params.id);
+  let name = new models.Name(sql, {id : req.params.id});
 
   await name.read();
   res.send(name.data);
 })
 
 app.post('/name', async (req, res) => {
-  let name = new models.Name(sql);
+  let name = new models.Name(sql, req.body);
 
-  name.first = req.body.firstName;
-  name.middle = req.body.middleName;
-  name.last = req.body.lastName;
   await name.create();
   res.send(name.data);
 });
 
 app.patch('/name/:id', async (req, res) => {
-  let name = new models.Name(sql, req.params.id);
+  let name = new models.Name(sql, req.body);
 
-  name.first = req.body.firstName;
-  name.middle = req.body.middleName;
-  name.last = req.body.lastName;
   await name.update();
   res.send(name.data);
 });
 
 app.delete('/name/:id', async (req, res) => {
-  let name = new models.Name(sql, req.params.id);
+  let name = new models.Name(sql, {id : req.params.id});
 
   await name.delete();
   res.send(name.data);
