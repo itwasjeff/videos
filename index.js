@@ -26,8 +26,54 @@ app.get('/sql', async (req, res) => {
       res.send(await sql`select now()`);
 });
 
+app.get('/encoders', async (req, res) => {
+      res.send(await sql`select * from video.encoders`);
+});
+
+app.get("/encoders/:id", async (req, res) => {
+  let encoder = new models.Encoder(sql, {id : req.params.id});
+
+  await encoder.read();
+  res.send(encoder.data);
+});
+
+app.post("/encoders", async (req, res) => {
+  let encoder = new models.Encoder(sql, req.body);
+
+  await encoder.create();
+  res.send(encoder.data);
+});
+
+app.patch("/encoders", async (req, res) => {
+  let encoder = new models.Encoder(sql, req.body);
+
+  await encoder.update();
+  res.send(encoder.data);
+});
+
 app.get('/genres', async (req, res) => {
       res.send(await sql`select * from video.genres`);
+});
+
+app.get("/genres/:id", async (req, res) => {
+  let genre = new models.Genre(sql, {id : req.params.id});
+
+  await genre.read();
+  res.send(genre.data);
+});
+
+app.post("/genres", async (req, res) => {
+  let genre = new models.Genre(sql, req.body);
+
+  await genre.create();
+  res.send(genre.data);
+});
+
+app.patch("/genres", async (req, res) => {
+  let genre = new models.Genre(sql, req.body);
+
+  await genre.update();
+  res.send(genre.data);
 });
 
 app.get('/name/:id', async (req, res) => {
@@ -35,7 +81,7 @@ app.get('/name/:id', async (req, res) => {
 
   await name.read();
   res.send(name.data);
-})
+});
 
 app.post('/name', async (req, res) => {
   let name = new models.Name(sql, req.body);
