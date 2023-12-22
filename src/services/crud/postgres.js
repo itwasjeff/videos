@@ -35,7 +35,7 @@ class Postgres extends Crud {
         result = await this.sql`
             insert into ${this.sql(this.table)}
             ${this.sql(data, _.filter(fields, (field) => {
-                return data[field] != undefined;
+                return data[field] !== undefined;
             }))}
             returning *
         `;
@@ -45,13 +45,14 @@ class Postgres extends Crud {
     async delete(data) {
         let result = null;
 
-        if (isNaN(data[this.idcol])) {
+        if (isNaN(data[this.idcol]) && isNaN(data[Postgres.defaults.idField])) {
             throw new TypeError("This record does not exist.");
         }
         result = await this.sql`
             update ${this.sql(this.table)}
             set deleted_date = ${this.sql`now()`}
-            where name_id = ${data[this.idcol]}
+            where ${this.sql(this.idcol)} = ${data[this.idcol]}
+            or ${this.sql(this.idcol)} = ${data[Postgres.defaults.idField]}
             returning *
         `;
         return !result || !result.length ? null : result[0];
@@ -60,13 +61,14 @@ class Postgres extends Crud {
     async read(data) {
         let result = null;
 
-        if (isNaN(data[this.idcol])) {
+        if (isNaN(data[this.idcol]) && isNaN(data[Postgres.defaults.idField])) {
             throw new TypeError("A record's id must be a positive integer.");
         }
         result = await this.sql`
             select *
             from ${this.sql(this.table)}
             where ${this.sql(this.idcol)} = ${data[this.idcol]}
+            or ${this.sql(this.idcol)} = ${data[Postgres.defaults.idField]}
             limit 1;
         `;
         return !result || !result.length ? null : result[0];
@@ -75,19 +77,24 @@ class Postgres extends Crud {
     async update(data, fields) {
         let result = null;
 
-        if (isNaN(data[this.idcol])) {
+        if (isNaN(data[this.idcol]) && isNaN(data[Postgres.defaults.idField])) {
             throw new TypeError("This record does not exist.");
         }
         result = await this.sql`
             update ${this.sql(this.table)}
             set ${this.sql(data, _.filter(fields, (field) => {
-                return data[field] != undefined;
+                return data[field] !== undefined;
             }))}
             where ${this.sql(this.idcol)} = ${data[this.idcol]}
+            or ${this.sql(this.idcol)} = ${data[Postgres.defaults.idField]}
             returning *
         `;
         return !result || !result.length ? null : result[0];
     }
 }
+
+Postgres.defaults = {
+    idField : "id"
+};
 
 module.exports = Postgres;

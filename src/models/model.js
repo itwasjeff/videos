@@ -6,13 +6,12 @@ class Model {
     constructor(sql, table, idcol) {
         sql = sql || postgres(Model.defaults.connection);
         this.crud = new Postgres(sql, table, idcol);
-        this.aggregates = {};
-        this.data = {[idcol] : null};
+        this.data = {[idcol] : null, id : null};
         this.idcol = idcol;
     }
 
     get id() {
-        return this.data[this.idcol];
+        return this.data[this.idcol] || this.data.id;
     }
 
     get isClosed() {

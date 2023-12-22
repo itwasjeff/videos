@@ -2,11 +2,14 @@
 
 const _ = require("lodash/object");
 const Model = require("./model.js");
+const Aggregates = require("./aggregates.js");
 
 class Record extends Model {
     constructor(sql, table, idcol) {
         super(sql, table, idcol);
+        this.aggregates = new Aggregates(this);
         this.data = _.assign(this.data, {
+            aggregates : {},
             created_date : null,
             modified_date : null,
             deleted_date : null

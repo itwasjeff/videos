@@ -44,7 +44,7 @@ app.post('/name', async (req, res) => {
   res.send(name.data);
 });
 
-app.patch('/name/:id', async (req, res) => {
+app.patch('/name', async (req, res) => {
   let name = new models.Name(sql, req.body);
 
   await name.update();
@@ -59,37 +59,29 @@ app.delete('/name/:id', async (req, res) => {
 });
 
 app.get('/person/:id', async (req, res) => {
-  let person = new models.Person(sql, req.params.id);
+  let person = new models.Person(sql, {person_id : req.params.id});
 
   await person.read();
-  res.send(person);
+  res.send(person.data);
 })
 
 app.post('/person', async (req, res) => {
-  let person = new models.Person(sql);
+  let person = new models.Person(sql, req.body);
 
-  if (req.body.person_name_id) {
-    await person.Name.read(req.body.person_name_id);
-  }
-  person.birthday = req.body.birthday;
   await person.create();
-  res.send(person);
+  res.send(person.data);
 });
 
-app.patch('/person/:id', async (req, res) => {
-  let person = new models.Person(sql, req.params.id);
+app.patch('/person', async (req, res) => {
+  let person = new models.Person(sql, req.body);
 
-  if (req.body.person_name_id) {
-    await person.Name.read(req.body.person_name_id);
-  }
-  person.birthday = req.body.birthday;
   await person.update();
-  res.send(person);
+  res.send(person.data);
 });
 
 app.delete('/person/:id', async (req, res) => {
-  let name = new models.Person(sql, req.params.id);
+  let person = new models.Person(sql, {person_id : req.params.id});
 
-  await name.delete();
-  res.send(name.data);
+  await person.delete();
+  res.send(person.data);
 });

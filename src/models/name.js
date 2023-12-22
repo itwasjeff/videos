@@ -3,15 +3,23 @@
 const _ = require("lodash/object");
 const Record = require("./record.js");
 
+/*
+    data : {
+        name_id : 0,
+        first_name : "",
+        middle_name? : "",
+        last_name? : ""
+    }
+*/
 class Name extends Record {
     constructor(sql, data) {
         super(sql, Name.table, "name_id");
         data = data || {};
         this.data = _.assign(this.data, {
             name_id : data.name_id || data.id || 0,
-            first_name : data.first || "",
-            middle_name : data.middle || null,
-            last_name : data.last || null
+            first_name : data.first_name || "",
+            middle_name : data.middle_name || null,
+            last_name : data.last_name || null
         });
         return this;
     }
@@ -51,13 +59,14 @@ class Name extends Record {
         const result = await this.crud.delete(this.data);
 
         this.data = _.assign(this.data, _.pick(result, _.keys(this.data)));      // assign properties from result only if it's already a property of this.data
+        this.data.name_id = 0;
         return this;
     }
 
     async read(id) {
         let result = null;
 
-        if (!isNaN(id) && id) {
+        if (id && !isNaN(id)) {
             this.data.name_id = id;
         }
         result = await this.crud.read(this.data);
