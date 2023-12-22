@@ -13,9 +13,7 @@ class Enum extends Model {
         super(sql, table, idcol);
         data = data || {};
         this.data = _.assign(this.data, {
-            [this.idcol] : data[this.idcol] || data.id || 0 /*,
-            name : data.name || ""      // "name" is intrinsic to Enum entity types
-            */
+            [this.idcol] : data[this.idcol] || data.id || 0
         });
         this.fields = ["name"].concat(fields || []);        // any additional fields we're interested in
         this.fields.forEach((value) => {
