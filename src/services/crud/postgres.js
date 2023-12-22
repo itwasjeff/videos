@@ -2,13 +2,14 @@ const config = require("../../configs/config.json");
 const _ = require("lodash/collection");
 const postgres = require("postgres");
 const Crud = require("./crud.js");
+const errors = require("../../utils/errors/index.js");
 
 class Postgres extends Crud {
     constructor(sql, table, idcol) {
         super();
         this.sql = sql || postgres(config.db.connection);
         if (!table) {
-            throw new ReferenceError("table is null or undefied.");
+            throw new ReferenceError("table is null or undefined.");
         } else if (!idcol) {
             throw new ReferenceError("idcol is null or undefined.");
         }
@@ -30,7 +31,7 @@ class Postgres extends Crud {
         let result = null;
 
         if (data[this.idcol]) {
-            throw new Error("A record with id '" + data[this.idcol] + "' already exists.");
+            throw new errors.SQLCreateError(this.table, "a record with id '" + data[this.idcol] + "' already exists.", data);
         }
         result = await this.sql`
             insert into ${this.sql(this.table)}

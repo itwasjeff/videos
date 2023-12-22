@@ -1,6 +1,7 @@
 const config = require("../configs/config.json");
 const postgres = require("postgres");
 const Postgres = require("../services/crud/postgres.js");
+const errors = require("../utils/errors/index.js");
 
 class Model {
     constructor(sql, table, idcol) {
@@ -19,19 +20,19 @@ class Model {
     }
 
     async create() {
-        throw new ReferenceError("'create' is not implemented.");
+        throw new errors.NotImplementedError("create");
     }
 
     async delete() {
-        throw new ReferenceError("'delete' is not implemented.");
+        throw new errors.NotImplementedError("delete");
     }
 
     async read(id) {
-        throw new ReferenceError("'read' is not implemented.");
+        throw new errors.NotImplementedError("read");
     }
 
     async update() {
-        throw new ReferenceError("'update' is not implemented.");
+        throw new errors.NotImplementedError("update");
     }
 }
 

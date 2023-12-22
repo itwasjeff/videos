@@ -15,8 +15,8 @@ class Enum extends Model {
         this.data = _.assign(this.data, {
             [this.idcol] : data[this.idcol] || data.id || 0
         });
-        this.fields = ["name"].concat(fields || []);        // any additional fields we're interested in
-        this.fields.forEach((value) => {
+        this.fields = Enum.requiredFields.concat(fields || []);        // add "name" to any additional fields we're interested in
+        this.fields.forEach((value) => {        // make sure data has all fields and their values
             this.data[value] = data[value] || null;
         });
         return this;
@@ -28,7 +28,7 @@ class Enum extends Model {
 
     set name(value) {
         if (value == null) {
-            throw new ReferenceError("name cannot be null.")
+            throw new ReferenceError("'name' cannot be null or undefined.")
         }
         this.data.name = value;
     }
@@ -40,16 +40,10 @@ class Enum extends Model {
         return this;
     }
 
-    // Enum types can NOT be deleted!
-    /*
+    // Enum types can NOT be deleted!!!
     async delete() {
-        const result = await this.crud.delete(this.data);
-
-        this.data = _.assign(this.data, _.pick(result, _.keys(this.data)));      // assign properties from result only if it's already a property of this.data
-        this.data[this.idcol] = 0;
-        return this;
+        super.delete();
     }
-    */
 
     async read(id) {
         let result = null;
@@ -69,5 +63,7 @@ class Enum extends Model {
         return this;
     }
 }
+
+Enum.requiredFields = ["name"];
 
 module.exports = Enum;
