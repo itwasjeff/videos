@@ -5,6 +5,7 @@ class Aggregates {
     constructor(owner) {
         this.owner = owner;
         this.items = {/* owner member name for this : aggregate model instance */};
+        this.data = this.owner.data.aggregates || {};
         return this;
     }
 
@@ -13,6 +14,8 @@ class Aggregates {
             return false;
         }
         this.items[name] = value;
+        this.data[name] = value.data;
+        this.data[name].id = this.owner.data[name];
         return true;
     }
 
@@ -32,7 +35,7 @@ class Aggregates {
             if (!this.items[i].id) {
                 await this.items[i].create();
                 this.owner.data[i] = this.items[i].id;      // set aggregate id in data
-                this.owner.data.aggregates[i] = this.items[i].data;     // populate entire aggregate in data
+                this.data[i] = this.items[i].data;     // populate entire aggregate in data
             }
         }
     }
@@ -40,11 +43,11 @@ class Aggregates {
     async delete() {
         for (let i in this.items) {
             if (this.owner.data[i]) {
-                this.owner.data.aggregates[i] = {id : this.owner.data[i]}
+                this.data[i] = {id : this.owner.data[i]}
                 this.items[i].data.id = this.owner.data[i];
                 await this.items[i].delete();
                 delete this.items[i].data.id;
-                this.owner.data.aggregates[i] = this.items[i].data;
+                this.data[i] = this.items[i].data;
             }
         }
     }
@@ -57,7 +60,7 @@ class Aggregates {
         for (let i in this.items) {
             if (this.owner.data[i]) {
                 await this.items[i].read(this.owner.data[i]);
-                this.owner.data.aggregates[i] = this.items[i].data;
+                this.data[i] = this.items[i].data;
             }
         }
     }
@@ -67,11 +70,14 @@ class Aggregates {
             return false;
         }
         delete this.items[name];
+        delete this.data[name];
         return true;
     }
 
     set(name, value) {
         this.items[name] = value;
+        this.data[name] = value.data;
+        this.data[name].id = this.owner.data[name];
         return value;
     }
 
@@ -79,7 +85,7 @@ class Aggregates {
         for (let i in this.items) {
             if (this.items[i].id) {
                 await this.items[i].update();
-                this.owner.data.aggregates[i] = this.items[i].data;
+                this.data[i] = this.items[i].data;
             }
         }
     }

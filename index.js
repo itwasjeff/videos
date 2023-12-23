@@ -6,6 +6,8 @@ const sql = postgres(config.db.connection);
 const express = require('express');
 const app = express();
 const auth = require("./src/middleware/auth.js");
+const Password = require("./src/utils/password.js");
+
 
 process.on("exit", (code) => {
   sql.end();
@@ -15,15 +17,18 @@ app.use(express.json());
 // app.use(auth);
 
 app.get('/', (req, res) => {
-
-
-  
   res.send('Hello World!');
 });
 
 app.listen(config.server.port, () => {
   console.log(`Example app listening at http://localhost:${config.server.port}`);
 });
+
+app.get("/hash/:password", async (req, res) => {
+  const pass = new Password(req.params.password);
+
+  res.send(pass.toString());
+})
 
 app.get('/sql', async (req, res) => {
       res.send(await sql`select now()`);

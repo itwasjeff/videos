@@ -1,59 +1,56 @@
-// import {Record} from "./record.js"
-
+const config = require("../configs/config.json");
 const _ = require("lodash/object");
 const Record = require("./record.js");
-const Name = require("./name.js");
+const Person = require("./person.js");
+const Password = require("../utils/password.js");
 
-/*
-    data : {
-        person_id : 0,
-        person_name_id : 0,
-        birthday? : "2000-01-01",
-        aggregates? : {
-            person_name_id? : {
-                name_id : 0,
-                first_name : "",
-                middle_name? : "",
-                last_name? : ""
-            }
-        }
-    }
-*/
-class Person extends Record {
+class User extends Record {
     constructor(sql, data) {
-        super(sql, Person.table, "person_id");
+        super(sql, User.table, "user_id");
         data = data || {};
         this.data = _.assign(this.data, {
-            person_id : data.person_id || data.id || 0,
-            person_name_id : data.person_name_id || 0,
-            birthday : data.birthday || null,
+            user_id : data.user_id || data.id || 0,
+            user_person_id : data.user_person_id || 0,
+            email : "",
+            password: "",
             aggregates : data.aggregates || {}
         });
-        this.aggregates.add("person_name_id", new Name(this.sql, this.data.aggregates.person_name_id));
+        this.data.aggregates.user_person_id = _.assign(this.data.aggregates.user_person_id || {}, {id : this.data.user_person_id});
+        this.aggregates.add("user_person_id", new Person(this.sql, this.data.aggregates.user_person_id));
         return this;
     }
 
-    get birthday() {
-        return this.data.birthday;
+    get email() {
+        return this.data.email;
     }
 
-    set birthday(value) {
-        this.data.birthday = value;
-    }
-
-    get name() {
-        return this.aggregates.get("person_name_id");
-    }
-
-    set name(value) {
+    set email(value) {
         if (!value) {
-            throw new ReferenceError("Name must not be null.");
+            throw new ReferenceError("'email' must not be null.");
         }
-        if (!(value instanceof Name)) {
-            throw new TypeError("Assignment must be a Name instance.");
+        this.data.email = email;
+    }
+
+    set password(value) {
+        if (!value) {
+            throw new ReferenceError("'password' must not be null or empty.");
         }
-        this.aggregates.set("person_name_id", value);
-        this.data.person_name_id = value ? value.id : 0;
+        this.data.password = new Password(value).toString();
+    }
+
+    get person() {
+        return this.aggregates.get("user_person_id");
+    }
+
+    set person(value) {
+        if (!value) {
+            throw new ReferenceError("Person must not be null.");
+        }
+        if (!(value instanceof Person)) {
+            throw new TypeError("Assignment must be a Person instance.");
+        }
+        this.aggregates.set("user_person_id", value);
+        this.data.user_person_id = value ? value.id : 0;
     }
 
     async create() {
@@ -101,6 +98,6 @@ class Person extends Record {
     }
 }
 
-Person.table = "persons";
+User.table = "users";
 
-module.exports = Person;
+module.exports = User;

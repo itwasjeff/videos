@@ -1,4 +1,9 @@
 {
+    "crypto" : {
+        "algorithm" : "sha256",
+        "digest" : "hex",
+        "secret" : "i have a secret"
+    },
     "db" : {
         "connection" : {
             "host" : "localhost",
