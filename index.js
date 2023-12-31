@@ -129,6 +129,7 @@ app.post('/person', async (req, res) => {
 app.patch('/person', async (req, res) => {
   let person = new models.Person(sql, req.body);
 
+  person.data.aggregates.person_name_id = person.aggregates.data.person_name_id;    // THIS SHOULD BE THE SAME!!!
   await person.update();
   res.send(person.data);
 });

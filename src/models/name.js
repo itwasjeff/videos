@@ -77,7 +77,8 @@ class Name extends Record {
     async update() {
         const result = await this.crud.update(this.data, ["first_name", "middle_name", "last_name"]);
         
-        this.data = _.assign(this.data, _.pick(result, _.keys(this.data)));      // assign properties from result only if it's already a property of this.data
+        // this.data = _.assign(this.data, _.pick(result, _.keys(this.data)));      // assign properties from result only if it's already a property of this.data
+        this.data = _.assign(this.data, result);
         return this;
     }
 }

@@ -27,7 +27,7 @@ class Person extends Record {
             person_id : data.person_id || data.id || 0,
             person_name_id : data.person_name_id || 0,
             birthday : data.birthday || null,
-            aggregates : data.aggregates || {}
+            aggregates : _.assign(data.aggregates || {}, {person_name_id : data.aggregates.person_name_id || {}})
         });
         this.aggregates.add("person_name_id", new Name(this.sql, this.data.aggregates.person_name_id));
         return this;
@@ -88,7 +88,7 @@ class Person extends Record {
 
     async update() {
         let result = null;
-        let data = _.assign({}, this.data);
+        let data = this.data;
 
         if (!data.person_name_id) {     // if no entity id was supplied grab the existing one and use that
             delete data.person_name_id;

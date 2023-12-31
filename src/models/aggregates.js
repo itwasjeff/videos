@@ -1,4 +1,4 @@
-const _ = require("lodash/collection");
+const _ = require("lodash/object");
 const Model = require("./model.js");
 
 class Aggregates {
@@ -85,7 +85,7 @@ class Aggregates {
         for (let i in this.items) {
             if (this.items[i].id) {
                 await this.items[i].update();
-                this.data[i] = this.items[i].data;
+                this.data[i] = _.assign(this.data[i], this.items[i].data);
             }
         }
     }
