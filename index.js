@@ -7,6 +7,8 @@ const express = require('express');
 const app = express();
 const auth = require("./src/middleware/auth.js");
 const Password = require("./src/utils/password.js");
+const DataPath = require("./src/utils/datapath.js");
+const errors = require("./src/utils/errors/index.js");
 
 
 process.on("exit", (code) => {
@@ -139,4 +141,21 @@ app.delete('/person/:id', async (req, res) => {
 
   await person.delete();
   res.send(person.data);
+});
+
+app.get("/test", async (req, res) => {
+  let dp = new DataPath();
+
+  dp.set("foo", {"bar" : "baz"});
+
+  let bp = new DataPath(dp, "mookie");
+
+  bp.set("pookie", {name : "pal"});
+  bp.merge("pookie", {name : "pals", value : "forever"})
+
+  bp.delete("pookie.value");
+
+  const has = bp.has("pookie.value");
+
+  res.send(dp.data);
 });
