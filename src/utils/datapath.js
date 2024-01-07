@@ -21,10 +21,12 @@ class DataPath {
         this.data = this.parent ? this.parent.data : {};
         this.path = path || "";
         this.instance = construct(this.data, this.path);
+        return this;
     }
 
     assign(path, value) {
-        return _.assign(construct(this.instance, path), value);
+        _.assign(construct(this.instance, path), value);
+        return this;
     }
 
     delete(path) {
@@ -45,6 +47,7 @@ class DataPath {
         })) {
             delete where[last];     // every segment resolved on path, delete the last one
         }
+        return this;
     }
 
     get(path) {
@@ -67,7 +70,8 @@ class DataPath {
     }
 
     merge(path, value) {
-        return _.merge(construct(this.instance, path), value);
+        _.merge(construct(this.instance, path), value);
+        return this;
     }
 
     set(path, value) {
@@ -80,6 +84,7 @@ class DataPath {
         const where = construct(this.instance, segments.join(DataPath.pathChar));
 
         where[last] = value;
+        return this;
     }
 }
 
