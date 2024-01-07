@@ -1,6 +1,7 @@
 class SQLError extends Error {
-    constructor() {
-        super("A SQL error has occured.");
+    constructor(msg, error) {
+        super(msg || "A SQL error has occured.");
+        this.error = error || null;
         this.name = "SQLError";
         return this;
     }

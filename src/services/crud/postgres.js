@@ -31,7 +31,7 @@ class Postgres extends Crud {
         let result = null;
 
         if (data[this.idcol]) {
-            throw new errors.SQLCreateError(this.table, "a record with id '" + data[this.idcol] + "' already exists.", data);
+            throw new errors.SQLInsertError(this.table, "a record with id '" + data[this.idcol] + "' already exists.", data);
         }
         result = await this.sql`
             insert into ${this.sql(this.table)}
