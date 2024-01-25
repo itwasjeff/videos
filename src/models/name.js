@@ -12,8 +12,8 @@ const Record = require("./record.js");
     }
 */
 class Name extends Record {
-    constructor(sql, data) {
-        super(sql, Name.table, "name_id");
+    constructor(sql, data, parent) {
+        super(sql, Name.table, "name_id", parent);
         data = data || {};
         this.data = _.assign(this.data, {
             name_id : data.name_id || data.id || 0,

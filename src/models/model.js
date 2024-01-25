@@ -31,6 +31,10 @@ class Model {
         throw new errors.NotImplementedError("read");
     }
 
+    toJSON() {
+        return this.data;
+    }
+
     async update() {
         throw new errors.NotImplementedError("update");
     }
