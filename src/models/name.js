@@ -66,7 +66,7 @@ class Name extends Record {
     async read(id) {
         let result = null;
 
-        if (id && !isNaN(id)) {
+        if (id) {
             this.data.name_id = id;
         }
         result = await this.crud.read(this.data);
@@ -81,8 +81,7 @@ class Name extends Record {
     async update() {
         const result = await this.crud.update(this.data, ["first_name", "middle_name", "last_name"]);
         
-        // this.data = _.assign(this.data, _.pick(result, _.keys(this.data)));      // assign properties from result only if it's already a property of this.data
-        this.data = _.assign(this.data, result);
+        this.data = _.assign(this.data, _.pick(result, _.keys(this.data)));      // assign properties from result only if it's already a property of this.data
         return this;
     }
 }

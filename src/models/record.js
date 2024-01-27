@@ -32,7 +32,6 @@ class Record extends Model {
         });
         this.parent = first instanceof Record ? first : null;
         this.items = {};        // hopefully a simple object can replace Aggregates()
-        // this.aggregates = new Aggregates(this);     // we want to redesign to eliminate use of aggregates
         return this;
     }
 
