@@ -13,7 +13,7 @@ const Record = require("./record.js");
 */
 class Name extends Record {
     constructor(first, data, sql) {
-        super(first, Name.table, "name_id", sql);
+        super(first, Name.table, Name.idcol, sql);
         data = data || {};
         this.data = _.assign(this.data, {
             name_id : data.name_id || data.id || 0,
@@ -74,6 +74,10 @@ class Name extends Record {
         return this;
     }
 
+    toJSON() {
+        return _.assign({}, this.data);
+    }
+
     async update() {
         const result = await this.crud.update(this.data, ["first_name", "middle_name", "last_name"]);
         
@@ -84,5 +88,6 @@ class Name extends Record {
 }
 
 Name.table = "names";
+Name.idcol = "name_id";
 
 module.exports = Name;

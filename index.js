@@ -90,57 +90,57 @@ app.get('/name/:id', async (req, res) => {
   let name = new models.Name(sql, {id : req.params.id});
 
   await name.read();
-  res.send(name.data);
+  res.send(name.toJSON());
 });
 
 app.post('/name', async (req, res) => {
   let name = new models.Name(sql, req.body);
 
   await name.create();
-  res.send(name.data);
+  res.send(name.toJSON());
 });
 
 app.patch('/name', async (req, res) => {
   let name = new models.Name(sql, req.body);
 
   await name.update();
-  res.send(name.data);
+  res.send(name.toJSON());
 });
 
 app.delete('/name/:id', async (req, res) => {
   let name = new models.Name(sql, {id : req.params.id});
 
   await name.delete();
-  res.send(name.data);
+  res.send(name.toJSON());
 });
 
 app.get('/person/:id', async (req, res) => {
   let person = new models.Person(sql, {person_id : req.params.id});
 
   await person.read();
-  res.send(person.data);
+  res.send(person.toJSON());
 })
 
 app.post('/person', async (req, res) => {
   let person = new models.Person(sql, req.body);
 
   await person.create();
-  res.send(person.data);
+  res.send(person.toJSON());
 });
 
 app.patch('/person', async (req, res) => {
   let person = new models.Person(sql, req.body);
 
-  person.data.aggregates.person_name_id = person.aggregates.data.person_name_id;    // THIS SHOULD BE THE SAME!!!
+  // person.data.aggregates.person_name_id = person.aggregates.data.person_name_id;    // THIS SHOULD BE THE SAME!!!
   await person.update();
-  res.send(person.data);
+  res.send(person.toJSON());
 });
 
 app.delete('/person/:id', async (req, res) => {
   let person = new models.Person(sql, {person_id : req.params.id});
 
   await person.delete();
-  res.send(person.data);
+  res.send(person.toJSON());
 });
 
 app.get("/test", async (req, res) => {

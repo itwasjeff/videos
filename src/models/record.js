@@ -19,33 +19,22 @@ const getSqlInstance = (first, second) => {
 }
 
 class Record extends Model {
+    // first - parent record or crud instance
+    // table - table name
+    // idcol - name of id column in table
+    // sql - optional crud instance to be used instead of any specified in first
     constructor(first, table, idcol, sql) {
         super(getSqlInstance(first, sql), table, idcol);
         this.data = _.assign(this.data, {
-            aggregates : {},
             created_date : null,
             modified_date : null,
             deleted_date : null
         });
         this.parent = first instanceof Record ? first : null;
-        this.aggregates = new Aggregates(this);     // we want to redesign to eliminate use of aggregates member
+        this.items = {};        // hopefully a simple object can replace Aggregates()
+        // this.aggregates = new Aggregates(this);     // we want to redesign to eliminate use of aggregates
         return this;
     }
-
-    /*
-    constructor(sql, table, idcol, parent) {
-        super(sql, table, idcol);
-        this.data = _.assign(this.data, {
-            aggregates : {},
-            created_date : null,
-            modified_date : null,
-            deleted_date : null
-        });
-        this.parent = parent || null;
-        this.aggregates = new Aggregates(this);
-        return this;
-    }
-    */
 
     get created() {
         return this.data.created_date;
@@ -61,5 +50,6 @@ class Record extends Model {
 }
 
 Record.table = "";
+Record.idcol = "";
 
 module.exports = Record;

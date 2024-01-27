@@ -1,3 +1,4 @@
+const _ = require("lodash/object");
 const config = require("../configs/config.json");
 const postgres = require("postgres");
 const Postgres = require("../services/crud/postgres.js");
@@ -32,7 +33,7 @@ class Model {
     }
 
     toJSON() {
-        return this.data;
+        return _.assign({}, this.data);
     }
 
     async update() {
