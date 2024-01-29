@@ -9,7 +9,7 @@ const Name = require("./name.js");
         person_id : 0,
         person_name_id : 0,
         birthday? : "2000-01-01",
-        Name? : {
+        Name : {
             name_id : 0,
             first_name : "",
             middle_name : "",

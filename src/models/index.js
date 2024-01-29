@@ -12,3 +12,4 @@ exports.Genre = require("./genre.js");
 exports.Record = require("./record.js");
 exports.Name = require("./name.js");
 exports.Person = require("./person.js");
+exports.User = require("./user.js");

@@ -6,7 +6,7 @@ const sql = postgres(config.db.connection);
 const express = require('express');
 const app = express();
 const auth = require("./src/middleware/auth.js");
-const Password = require("./src/utils/password.js");
+const Password = require("./src/services/security/password.js");
 const DataPath = require("./src/utils/datapath.js");
 const errors = require("./src/utils/errors/index.js");
 
@@ -27,9 +27,9 @@ app.listen(config.server.port, () => {
 });
 
 app.get("/hash/:password", async (req, res) => {
-  const pass = new Password(req.params.password);
+  const pass = new Password();
 
-  res.send(pass.toString());
+  res.send(pass.hash(req.params.password));
 })
 
 app.get('/sql', async (req, res) => {
@@ -131,7 +131,6 @@ app.post('/person', async (req, res) => {
 app.patch('/person', async (req, res) => {
   let person = new models.Person(sql, req.body);
 
-  // person.data.aggregates.person_name_id = person.aggregates.data.person_name_id;    // THIS SHOULD BE THE SAME!!!
   await person.update();
   res.send(person.toJSON());
 });
@@ -141,6 +140,41 @@ app.delete('/person/:id', async (req, res) => {
 
   await person.delete();
   res.send(person.toJSON());
+});
+
+
+app.get('/users/:id', async (req, res) => {
+  let user = new models.User(sql, {user_id : req.params.id});
+
+  await user.read();
+  res.send(user.toJSON());
+})
+
+app.post('/users', async (req, res) => {
+  let user = new models.User(sql, req.body);
+  let pass = new Password();
+
+  user.password = pass.hash(req.body.password);
+  await user.create();
+  res.send(user.toJSON());
+});
+
+app.patch('/users', async (req, res) => {
+  let user = new models.User(sql, req.body);
+  let pass = new Password();
+
+  if (req.body.password) {
+    user.password = pass.hash(req.body.password);
+  }
+  await user.update();
+  res.send(user.toJSON());
+});
+
+app.delete('/users/:id', async (req, res) => {
+  let user = new models.User(sql, {user_id : req.params.id});
+
+  await user.delete();
+  res.send(user.toJSON());
 });
 
 app.get("/test", async (req, res) => {
