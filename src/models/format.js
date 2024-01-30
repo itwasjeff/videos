@@ -8,11 +8,14 @@ const Enum = require("./enum.js");
 */
 class Format extends Enum {
     constructor(sql, data) {
-        super(sql, data, Format.table, "format_id");
+        super(sql, data, Format.defaults.table, Format.defaults.idcol);
         return this;
     }
 }
 
-Format.table = "formats";
+Format.defaults = {
+    idcol : "format_id",
+    table : "formats"
+}
 
 module.exports = Format;

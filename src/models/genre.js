@@ -8,11 +8,14 @@ const Enum = require("./enum.js");
 */
 class Genre extends Enum {
     constructor(sql, data) {
-        super(sql, data, Genre.table, "genre_id");
+        super(sql, data, Genre.defaults.table, Genre.defaults.idcol);
         return this;
     }
 }
 
-Genre.table = "genres";
+Genre.defaults = {
+    idcol : "genre_id",
+    table : "genres"
+};
 
 module.exports = Genre;

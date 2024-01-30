@@ -1,3 +1,4 @@
+const _ = require("lodash/object");
 const Enum = require("./enum.js");
 
 /*
@@ -9,11 +10,17 @@ const Enum = require("./enum.js");
 */
 class Encoder extends Enum {
     constructor(sql, data) {
-        super(sql, data, Encoder.table, "encoder_id", ["description"]);
+        super(sql, data, Encoder.defaults.table, Encoder.defaults.idcol, _.keys(Encuder.defaults.fields));
         return this;
     }
 }
 
-Encoder.table = "encoders";
+Encoder.defaults = {
+    fields : {
+        description : ""
+    },
+    idcol : "encoder_id",
+    table : "encoders"
+};
 
 module.exports = Encoder;
