@@ -19,13 +19,9 @@ const Name = require("./name.js");
 */
 class Person extends Record {
     constructor(first, data, sql) {
-        super(first, Person.table, Person.idcol, sql);
+        super(first, Person.defaults.table, Person.defaults.idcol, sql);
         data = data || {};
-        this.data = _.assign(this.data, {
-            person_id : data.person_id || data.id || 0,
-            person_name_id : data.person_name_id || 0,
-            birthday : data.birthday || null
-        });
+        this.data = _.assign(this.data, _.pick(data, _.keys(Person.defaults.fields).concat(Person.defaults.idcol, "id")));
         this.items.Name = new Name(this, data.Name);
         return this;
     }
@@ -56,15 +52,15 @@ class Person extends Record {
 
         await this.items.Name.create();
         this.data.person_name_id = this.items.Name.data.name_id;
-        result = await this.crud.create(this.data, ["person_name_id", "birthday"]);
-        this.data = _.assign(this.data, _.pick(result, _.keys(this.data)));      // assign properties from result only if it's already a property of this.data
+        result = await this.crud.create(_.defaults(this.data, Person.defaults.fields), _.keys(Person.defaults.fields));
+        this.data = _.assign(this.data, result);
         return this;
     }
 
     async delete() {
         let result = await this.crud.delete(this.data);
 
-        this.data = _.assign(this.data, _.pick(result, _.keys(this.data)));      // assign properties from result only if it's already a property of this.data
+        this.data = _.assign(this.data, result);
         this.items.Name.data.name_id = this.data.person_name_id;
         await this.items.Name.delete();
         this.data.person_id = 0;
@@ -78,7 +74,7 @@ class Person extends Record {
             this.data.person_id = id;
         }
         result = await this.crud.read(this.data);
-        this.data = _.assign(this.data, _.pick(result, _.keys(this.data)));      // assign properties from result only if it's already a property of this.data
+        this.data = _.assign(this.data, result);
         await this.items.Name.read(this.data.person_name_id);
         return this;
     }
@@ -93,15 +89,21 @@ class Person extends Record {
         if (!this.data.person_name_id) {     // if no entity id was supplied grab the existing one and use that
             delete this.data.person_name_id;
         }
-        result = await this.crud.update(this.data, ["person_name_id", "birthday"]);
-        this.data = _.assign(this.data, _.pick(result, _.keys(this.data).concat("person_name_id")));      // assign properties from result only if it's already a property of this.data and remember to explicitly add person_name_id since we deleted it
+        result = await this.crud.update(this.data, _.keys(_.pick(this.data, _.keys(Person.defaults.fields))));
+        this.data = _.assign(this.data, result);
         this.items.Name.data.name_id = this.data.person_name_id;
         await this.items.Name.update();
         return this;
     }
 }
 
-Person.table = "persons";
-Person.idcol = "person_id";
+Person.defaults = {
+    fields : {
+        person_name_id : 0,
+        birthday : ""
+    },
+    idcol : "person_id",
+    table : "persons"
+};
 
 module.exports = Person;

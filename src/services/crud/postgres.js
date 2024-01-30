@@ -80,6 +80,8 @@ class Postgres extends Crud {
 
         if (isNaN(data[this.idcol]) && isNaN(data[Postgres.defaults.idField])) {
             throw new TypeError("This record does not exist.");
+        } else if (!fields.length) {       // edge case handles no-op updates
+            return this.read(data);
         }
         result = await this.sql`
             update ${this.sql(this.table)}

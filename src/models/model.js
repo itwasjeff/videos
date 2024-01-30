@@ -6,14 +6,23 @@ const errors = require("../utils/errors/index.js");
 
 class Model {
     constructor(sql, table, idcol) {
-        sql = sql || postgres(Model.defaults.connection);
+        sql = sql || postgres(Model.defaults.db.connection);
         this.crud = new Postgres(sql, table, idcol);
-        this.data = {[idcol] : null, id : null};
+        this.data = {[idcol] : null, [Model.defaults.idcol] : null};
         this.idcol = idcol;
     }
 
     get id() {
         return this.data[this.idcol] || this.data.id;
+    }
+
+    set id(value) {
+        if (value == null) {
+            throw new ReferenceError("'value' is null or undefined.");
+        } else if (isNaN(value) || value < 0) {
+            throw new RangeError("'value' must be a positive integer.");
+        }
+        this.data[this.idcol] = this.data.id = value;
     }
 
     get isClosed() {
@@ -42,11 +51,15 @@ class Model {
 }
 
 Model.defaults = {
-    connection : JSON.parse(JSON.stringify(config.db.connection)),      // quick and dirty deep copy (we want consumer to be able to change Model defaults)
-    database : config.db.connection.database,
-    timeout : config.db.timeout
-};
+    db : {
+        connection : JSON.parse(JSON.stringify(config.db.connection)),      // quick and dirty deep copy (we want consumer to be able to change Model defaults)
+        timeout : config.db.timeout
+    },
+    fields : {
 
-Model.table = "";
+    },
+    idcol : "id",
+    table : ""
+};
 
 module.exports = Model;

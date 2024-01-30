@@ -47,7 +47,14 @@ class Record extends Model {
     }
 }
 
-Record.table = "";
-Record.idcol = "";
+Record.defaults = {
+    fields : {
+        created_date : null,
+        modified_date : null,
+        deleted_date : null
+    },
+    idcol : "",
+    table : ""
+};
 
 module.exports = Record;

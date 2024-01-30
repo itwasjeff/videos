@@ -10,6 +10,8 @@ const Password = require("./src/services/security/password.js");
 const DataPath = require("./src/utils/datapath.js");
 const errors = require("./src/utils/errors/index.js");
 
+const _ = require("lodash");
+
 
 process.on("exit", (code) => {
   sql.end();
@@ -178,18 +180,8 @@ app.delete('/users/:id', async (req, res) => {
 });
 
 app.get("/test", async (req, res) => {
-  let dp = new DataPath();
+  const a = {a : 'a', b : 'b'};
+  const b = _.pick(a, ["a", "c"]);
 
-  dp.set("foo", {"bar" : "baz"});
-
-  let bp = new DataPath(dp, "mookie");
-
-  bp.set("pookie", {name : "pal"});
-  bp.merge("pookie", {name : "pals", value : "forever"})
-
-  bp.delete("pookie.value");
-
-  const has = bp.has("pookie.value");
-
-  res.send(dp.data);
+  res.send(b);
 });

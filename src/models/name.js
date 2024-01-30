@@ -13,14 +13,9 @@ const Record = require("./record.js");
 */
 class Name extends Record {
     constructor(first, data, sql) {
-        super(first, Name.table, Name.idcol, sql);
+        super(first, Name.defaults.table, Name.defaults.idcol, sql);
         data = data || {};
-        this.data = _.assign(this.data, {
-            name_id : data.name_id || data.id || 0,
-            first_name : data.first_name || "",
-            middle_name : data.middle_name || null,
-            last_name : data.last_name || null
-        });
+        this.data = _.assign(this.data, _.pick(data, _.keys(Name.defaults.fields).concat(Name.defaults.idcol, "id")));
         return this;
     }
 
@@ -49,16 +44,16 @@ class Name extends Record {
     }
 
     async create() {
-        const result = await this.crud.create(this.data, ["first_name", "middle_name", "last_name"]);
+        const result = await this.crud.create(_.defaults(this.data, Name.defaults.fields), _.keys(Name.defaults.fields));
 
-        this.data = _.assign(this.data, _.pick(result, _.keys(this.data)));      // assign properties from result only if it's already a property of this.data
+        this.data = _.assign(this.data, result);
         return this;
     }
 
     async delete() {
         const result = await this.crud.delete(this.data);
 
-        this.data = _.assign(this.data, _.pick(result, _.keys(this.data)));      // assign properties from result only if it's already a property of this.data
+        this.data = _.assign(this.data, result);
         this.data.name_id = 0;
         return this;
     }
@@ -70,7 +65,7 @@ class Name extends Record {
             this.data.name_id = id;
         }
         result = await this.crud.read(this.data);
-        this.data = _.assign(this.data, _.pick(result, _.keys(this.data)));      // assign properties from result only if it's already a property of this.data
+        this.data = _.assign(this.data, result);
         return this;
     }
 
@@ -79,14 +74,21 @@ class Name extends Record {
     }
 
     async update() {
-        const result = await this.crud.update(this.data, ["first_name", "middle_name", "last_name"]);
-        
-        this.data = _.assign(this.data, _.pick(result, _.keys(this.data)));      // assign properties from result only if it's already a property of this.data
+        const result = await this.crud.update(this.data, _.keys(_.pick(this.data, _.keys(Name.defaults.fields))));
+
+        this.data = _.assign(this.data, result);
         return this;
     }
 }
 
-Name.table = "names";
-Name.idcol = "name_id";
+Name.defaults = {
+    fields : {
+        first_name : "",
+        middle_name : null,
+        last_name : null
+    },
+    idcol : "name_id",
+    table : "names"
+};
 
 module.exports = Name;
