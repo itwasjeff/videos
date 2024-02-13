@@ -1,7 +1,7 @@
-const config = require("../../configs/config.json");
+const config = require("../../../configs/config.json");
 const crypto = require("node:crypto");
 
-class Password {
+class Hasher {
     constructor(algorithm, secret, digest) {
         this.algorithm = algorithm || config.crypto.algorithm;
         this.secret = secret || config.crypto.secret;
@@ -18,4 +18,4 @@ class Password {
     // TODO - add rules logic to test plain pass
 }
 
-module.exports = Password;
+module.exports = Hasher;

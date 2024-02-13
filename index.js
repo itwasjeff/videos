@@ -2,15 +2,16 @@ const config = require("./src/configs/config.json");
 const process = require("node:process");
 const models = require("./src/models/index.js");
 const postgres = require('postgres');
-const sql = postgres(config.db.connection);
 const express = require('express');
 const app = express();
 const auth = require("./src/middleware/auth.js");
-const Password = require("./src/services/security/password.js");
+const Hasher = require("./src/services/security/password/hasher.js");
 const DataPath = require("./src/utils/datapath.js");
 const errors = require("./src/utils/errors/index.js");
-
 const _ = require("lodash");
+
+
+const sql = postgres(config.db.connection);
 
 
 process.on("exit", (code) => {
@@ -29,7 +30,7 @@ app.listen(config.server.port, () => {
 });
 
 app.get("/hash/:password", async (req, res) => {
-  const pass = new Password();
+  const pass = new Hasher();
 
   res.send(pass.hash(req.params.password));
 })
@@ -154,7 +155,7 @@ app.get('/users/:id', async (req, res) => {
 
 app.post('/users', async (req, res) => {
   let user = new models.User(sql, req.body);
-  let pass = new Password();
+  let pass = new Hasher();
 
   user.password = pass.hash(req.body.password);
   await user.create();
@@ -163,7 +164,7 @@ app.post('/users', async (req, res) => {
 
 app.patch('/users', async (req, res) => {
   let user = new models.User(sql, req.body);
-  let pass = new Password();
+  let pass = new Hasher();
 
   if (req.body.password) {
     user.password = pass.hash(req.body.password);
